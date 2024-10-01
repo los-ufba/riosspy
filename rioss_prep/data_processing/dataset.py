@@ -35,7 +35,7 @@ from time import time
 
 from pathlib import Path
 
-import rioss_prep_training.rioss_transforms as rt
+import rioss_prep.transforms as rt
 
 class RiossDataModule(pl.LightningDataModule):
     def __init__(self, 

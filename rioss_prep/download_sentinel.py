@@ -26,10 +26,10 @@ class DownloadKit:
             print("Could not find: ", name)
         return response_result
     
-    def query_by_pos_date(center_wtk, start_date, start_end_date, name=None):
+    def query_by_pos_date(center_wtk, start_date, start_end_date, name=None, type='OCN'):
         json = requests.get(f"https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-1' and\
                         OData.CSC.Intersects(area=geography'SRID=4326;{center_wtk}%27) and\
-                        contains(Name,'OCN') and\
+                        contains(Name,'{type}') and\
                         ContentDate/Start gt {start_date}Z and\
                         ContentDate/Start lt {start_end_date}").json()
         response_result = None
@@ -40,7 +40,6 @@ class DownloadKit:
             print("Could not find: ", name)
         return response_result
         
-
     
     def is_downloaded(sar_name, folder):
         sar_path = Path(folder) / (sar_name + ".SAFE.zip")
@@ -140,18 +139,18 @@ class DownloadSar:
                 else:
                     print('Could not download because name not found or 2 different data on query to name:', sar_name)
 
-    def download_ocn(self, nc_folder, folder, subproduct_folder, overwrite=False):
+    def download_ocn(self, output_folder, nc_folder, subproduct_folder, overwrite=False):
         count = 0
-        folder = Path(folder)
+        output_folder = Path(output_folder)
         subproduct_folder = Path(subproduct_folder)
         nc_folder = Path(nc_folder)
         for nc_file in sorted(nc_folder.glob('*.nc')):
-            if not (folder / nc_file.with_suffix('.nc').name).exists() or overwrite:
+            if not (output_folder / nc_file.with_suffix('.nc').name).exists() or overwrite:
                 center_wtk = DownloadKit.center_wtk(nc_file)
                 start_range = DownloadKit.get_start_range(nc_file)
                 query = DownloadKit.query_by_pos_date(center_wtk, *start_range, name=nc_file.stem)
                 if query:
-                    donwload_path = DownloadKit.download(self.email, self.password, query[0]['Id'], folder, name=nc_file.stem)
+                    donwload_path = DownloadKit.download(self.email, self.password, query[0]['Id'], output_folder, name=nc_file.stem)
                     unzip_folder = subproduct_folder / donwload_path.stem
                     DownloadKit.unzip(donwload_path, unzip_folder)
                     measurement_file = list(unzip_folder.glob('*.SAFE'))[0] / 'measurement'
@@ -161,7 +160,37 @@ class DownloadSar:
                     donwload_path.unlink()
                     count += 1
 
-            
+    
+    def download_grdh(self, output_folder, nc_folder, subproduct_folder, overwrite=False, type='GRDH'):
+        count = 0
+        output_folder = Path(output_folder)
+        subproduct_folder = Path(subproduct_folder)
+        nc_folder = Path(nc_folder)
+        for nc_file in sorted(nc_folder.glob('*.nc')):
+            if not (output_folder / nc_file.with_suffix('.nc').name).exists() or overwrite:
+                center_wtk = DownloadKit.center_wtk(nc_file)
+                start_range = DownloadKit.get_start_range(nc_file)
+                query = DownloadKit.query_by_pos_date(center_wtk, *start_range, name=nc_file.stem, type="GRDH")
+
+                temp_query = []
+                for item in query:
+                    if not 'COG' in item['Name']:
+                        temp_query.append(item)
+                query = temp_query
+
+                for item in query:
+                    print(item['Name'])
+                    
+                if query:
+                    donwload_path = DownloadKit.download(self.email, self.password, query[0]['Id'], output_folder, name=nc_file.stem)
+                    unzip_folder = subproduct_folder / donwload_path.stem
+                    DownloadKit.unzip(donwload_path, unzip_folder)
+                    measurement_file = list(unzip_folder.glob('*.SAFE'))[0] / 'measurement'
+                    ocn_nc_file = list(measurement_file.glob('*.nc'))[0]
+                    output_path = donwload_path.with_suffix('.nc')
+                    ocn_nc_file.rename(output_path)
+                    donwload_path.unlink()
+                    count += 1        
 
 
 
@@ -187,7 +216,8 @@ if __name__ == '__main__':
     data_pd = list(data_pd.dropna(how="all"))
     test = DownloadSar(email="pedro.meirelles@ufba.br", password="Thermal1234@")
     # test.download_sls(data_pd, test_path)
-    test.download_ocn(NETCDF_FOLDER, '/mnt/camobi_2/PHMG/temp_ocn', '/mnt/camobi_2/PHMG/unzip_folder_delete')
+    # test.download_ocn('/mnt/camobi_2/PHMG/temp_ocn', NETCDF_FOLDER, '/mnt/camobi_2/PHMG/unzip_folder_delete')
+    test.download_grdh('/mnt/camobi_2/PHMG/temp_grdh', NETCDF_FOLDER, '/mnt/camobi_2/PHMG/unzip_folder_delete', type='GRDH')
     # DownloadKit.unzip('/mnt/camobi_2/PHMG/delete_now/0E78.zip', test_path + '/0E78')
 
 

@@ -309,7 +309,7 @@ if __name__ == '__main__':
         # print(label_json, no_land_json)
         if (label_json.exists() and no_land_json.exists()):
             ds = DataAssembler(file.stem, '/mnt/camobi_3/new_data')
-            ds.to_nc_dataset(DATASET_FOLDER)
+            # ds.to_nc_dataset(DATASET_FOLDER)
 
 
     # for safe_zip in UNZIP_FOLDR.glob('*.SAFE'):
