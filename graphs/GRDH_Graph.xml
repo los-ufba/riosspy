@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<graph id="Graph">
+	<version>1.0</version>
+	<node id="Read">
+		<operator>Read</operator>
+		<sources></sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<useAdvancedOptions>false</useAdvancedOptions>
+			<file>/mnt/camobi_2/PHMG/temp_grdh/S1A_IW_GRDH_1SDV_20200415T002337_20200415T002402_032131_03B6DA_09AB.SAFE</file>
+			<copyMetadata>true</copyMetadata>
+			<pixelRegion>0,0,25904,16734</pixelRegion>
+			<bandNames></bandNames>
+			<maskNames></maskNames>
+		</parameters>
+	</node>
+	<node id="Calibration">
+		<operator>Calibration</operator>
+		<sources>
+			<sourceProduct refid="Speckle-Filter"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands></sourceBands>
+			<auxFile>Product Auxiliary File</auxFile>
+			<externalAuxFile></externalAuxFile>
+			<outputImageInComplex>false</outputImageInComplex>
+			<outputImageScaleInDb>false</outputImageScaleInDb>
+			<createGammaBand>false</createGammaBand>
+			<createBetaBand>false</createBetaBand>
+			<selectedPolarisations>VV</selectedPolarisations>
+			<outputSigmaBand>true</outputSigmaBand>
+			<outputGammaBand>false</outputGammaBand>
+			<outputBetaBand>false</outputBetaBand>
+		</parameters>
+	</node>
+	<node id="Speckle-Filter">
+		<operator>Speckle-Filter</operator>
+		<sources>
+			<sourceProduct refid="Read"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands>Intensity_VV</sourceBands>
+			<filter>Lee Sigma</filter>
+			<filterSizeX>3</filterSizeX>
+			<filterSizeY>3</filterSizeY>
+			<dampingFactor>2</dampingFactor>
+			<estimateENL>true</estimateENL>
+			<enl>1.0</enl>
+			<numLooksStr>1</numLooksStr>
+			<windowSize>7x7</windowSize>
+			<targetWindowSizeStr>3x3</targetWindowSizeStr>
+			<sigmaStr>0.9</sigmaStr>
+			<anSize>50</anSize>
+		</parameters>
+	</node>
+	<node id="Write">
+		<operator>Write</operator>
+		<sources>
+			<sourceProduct refid="Calibration"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<file>/mnt/camobi_2/PHMG/delete_now/09AB.nc</file>
+			<formatName>NetCDF4-CF</formatName>
+		</parameters>
+	</node>
+	<applicationData id="Presentation">
+		<Description></Description>
+		<node id="Read">
+			<displayPosition x="37.0" y="134.0"></displayPosition>
+		</node>
+		<node id="Calibration">
+			<displayPosition x="346.0" y="133.0"></displayPosition>
+		</node>
+		<node id="Speckle-Filter">
+			<displayPosition x="178.0" y="131.0"></displayPosition>
+		</node>
+		<node id="Write">
+			<displayPosition x="455.0" y="135.0"></displayPosition>
+		</node>
+	</applicationData>
+</graph>

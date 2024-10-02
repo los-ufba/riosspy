@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='rioss_prep',
-    version='0.1.5',
+    name='riosspy',
+    version='0.1.6',
     packages=find_packages(),
     install_requires=[],
     author='Pedro Meirelles',

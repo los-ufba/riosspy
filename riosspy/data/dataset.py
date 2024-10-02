@@ -35,7 +35,7 @@ from time import time
 
 from pathlib import Path
 
-import rioss_prep.transforms as rt
+import riosspy.data.transforms as rt
 
 class RiossDataModule(pl.LightningDataModule):
     def __init__(self, 
@@ -45,7 +45,7 @@ class RiossDataModule(pl.LightningDataModule):
                  class_weights, 
                  batch_size, 
                  label_order_path, 
-                 resize_size=None, 
+                 resize=None, 
                  overlap=0, 
                  filter_min=0,
                  filter_max=1,
@@ -58,9 +58,9 @@ class RiossDataModule(pl.LightningDataModule):
         self.win_size = win_size
         self.overlap = overlap
 
-        self.resize_size = (win_size, win_size)
-        if not resize_size == None:
-            self.resize_size = (resize_size, resize_size)
+        self.resize = (win_size, win_size)
+        if not resize == None:
+            self.resize = (resize, resize)
 
         self.dataset_folder = Path(dataset_folder)
         self.label_order_path = label_order_path
@@ -81,7 +81,7 @@ class RiossDataModule(pl.LightningDataModule):
                 rt.ToBinaryTransformd(keys=["label"], label_num=1),
                 SignalFillEmptyd(keys=["img", "label"], replacement=0.0),
                 rt.EnsureChanellFirstd(keys=["img", "label"]),
-                Resized(keys=["img", "label"], spatial_size=self.resize_size, mode=['nearest', 'nearest']),
+                Resized(keys=["img", "label"], spatial_size=self.resize, mode=['nearest', 'nearest']),
                 RandAxisFlipd(keys=["img", "label"], prob=2/3),
                 RandRotate90d(keys=["img", "label"], prob=3/4)
             ])
@@ -164,7 +164,7 @@ class NetcdfDataset:
         self.filter_max = filter_max
         self.filter_min = filter_min
         self.class_coords_dict = None
-        # self.wind_speed = self.xarray_ds.wind_speed
+        self.wind_speed = self.xarray_ds.wind_speed
 
         assert overlap >= 0 and overlap < 1, f'Overlap must be betwen 0 and 1'
         self.overlap = overlap

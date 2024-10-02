@@ -7,10 +7,10 @@ from lightning.pytorch.loggers import MLFlowLogger
 from lightning.pytorch.loggers import CometLogger
 
 
-import rioss_prep_training.rioss_callbacks as rc
-import rioss_prep_training.rioss_dataset as rd
-import rioss_prep_training.rioss_models.TransferModels as tm
-import rioss_prep_training.rioss_models.UnetrModels as urm
+import rioss_prep.callbacks as rc
+import rioss_prep.data_processing.dataset as rd
+import rioss_prep.rioss_models.transfer_models as tm
+import rioss_prep.rioss_models.unetr_models as urm
 
 from torch import set_float32_matmul_precision
 import time
@@ -21,9 +21,6 @@ import os
 
 import json
 
-with open('/mnt/camobi_2/PHMG/rioss_prep_training/tests/api_key.json', 'r') as file:
-    data = json.load(file)
-api_key = data.get('key')
 
 model = tm.SMP(
     input_size=512, 
@@ -75,7 +72,7 @@ lr_monitor = LearningRateMonitor(logging_interval='epoch')
 
 logger = CSVLogger('/mnt/camobi_2/PHMG/delete_callback_test')
 
-with open('/mnt/camobi_2/PHMG/rioss_prep_training/tests/api_key.json', 'r') as file:
+with open('/mnt/camobi_2/PHMG/rioss_prep/tests/api_key.json', 'r') as file:
     data = json.load(file)
 api_key = data.get('key')
 
@@ -92,9 +89,9 @@ trainer = Trainer(max_epochs=300,
                     accelerator='gpu',
                     devices=[0, 1],#[0,1] or -1
                     profiler="simple",
-                    callbacks=[early_stopping, model_checkpoint], #, early_stopping, model_checkpoint],
+                    # callbacks=[early_stopping, model_checkpoint], #, early_stopping, model_checkpoint],
                     log_every_n_steps=8,
-                    logger=comet_logger,
+                    # logger=comet_logger,
                     use_distributed_sampler=False,
                     strategy='ddp',
                     # precision="bf16-mixed",

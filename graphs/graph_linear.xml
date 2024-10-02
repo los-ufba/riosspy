@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<graph id="Graph">
+	<version>1.0</version>
+	<node id="Read">
+		<operator>Read</operator>
+		<sources></sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<useAdvancedOptions>false</useAdvancedOptions>
+			<file>/mnt/camobi_2/PHMG/temp_grdh/S1A_IW_GRDH_1SDV_20200415T002337_20200415T002402_032131_03B6DA_09AB.SAFE</file>
+			<copyMetadata>true</copyMetadata>
+			<bandNames></bandNames>
+			<pixelRegion>0,0,68898,15070</pixelRegion>
+			<maskNames></maskNames>
+		</parameters>
+	</node>
+	<node id="Apply-Orbit-File">
+		<operator>Apply-Orbit-File</operator>
+		<sources>
+			<sourceProduct refid="Read"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<orbitType>Sentinel Precise (Auto Download)</orbitType>
+			<polyDegree>3</polyDegree>
+			<continueOnFail>true</continueOnFail>
+		</parameters>
+	</node>
+	<node id="Calibration">
+		<operator>Calibration</operator>
+		<sources>
+			<sourceProduct refid="Apply-Orbit-File"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands></sourceBands>
+			<auxFile>Latest Auxiliary File</auxFile>
+			<externalAuxFile></externalAuxFile>
+			<outputImageInComplex>false</outputImageInComplex>
+			<outputImageScaleInDb>false</outputImageScaleInDb>
+			<createGammaBand>false</createGammaBand>
+			<createBetaBand>false</createBetaBand>
+			<selectedPolarisations>VV</selectedPolarisations>
+			<outputSigmaBand>true</outputSigmaBand>
+			<outputGammaBand>false</outputGammaBand>
+			<outputBetaBand>false</outputBetaBand>
+		</parameters>
+	</node>
+	<node id="TOPSAR-Deburst">
+		<operator>TOPSAR-Deburst</operator>
+		<sources>
+			<sourceProduct refid="Calibration"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<selectedPolarisations>VV</selectedPolarisations>
+		</parameters>
+	</node>
+	<node id="Multilook">
+		<operator>Multilook</operator>
+		<sources>
+			<sourceProduct refid="TOPSAR-Deburst"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands></sourceBands>
+			<nRgLooks>4</nRgLooks>
+			<nAzLooks>1</nAzLooks>
+			<outputIntensity>true</outputIntensity>
+			<grSquarePixel>true</grSquarePixel>
+		</parameters>
+	</node>
+	<node id="Subset">
+		<operator>Subset</operator>
+		<sources>
+			<sourceProduct refid="Multilook"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands>Sigma0_VV</sourceBands>
+			<tiePointGrids></tiePointGrids>
+			<region>0,0,0,0</region>
+			<referenceBand></referenceBand>
+			<geoRegion>POLYGON ((            12.150811645776212 -7.618894698506098,             11.649407305467673 -7.5068401182956865,             11.503385569032782 -8.161878384643632,             12.00585674567078 -8.274477385550346,             12.150811645776212 -7.618894698506098        ))</geoRegion>
+			<subSamplingX>1</subSamplingX>
+			<subSamplingY>1</subSamplingY>
+			<fullSwath>false</fullSwath>
+			<copyMetadata>true</copyMetadata>
+		</parameters>
+	</node>
+	<node id="Write">
+		<operator>Write</operator>
+		<sources>
+			<sourceProduct refid="Subset"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<file>/mnt/camobi_2/PHMG/delete_now/09AB.nc</file>
+			<formatName>NetCDF4-CF</formatName>
+		</parameters>
+	</node>
+	<applicationData id="Presentation">
+		<Description></Description>
+		<node id="Read">
+			<displayPosition x="92.0" y="230.0"></displayPosition>
+		</node>
+		<node id="Apply-Orbit-File">
+			<displayPosition x="226.0" y="231.0"></displayPosition>
+		</node>
+		<node id="Calibration">
+			<displayPosition x="363.0" y="229.0"></displayPosition>
+		</node>
+		<node id="TOPSAR-Deburst">
+			<displayPosition x="492.0" y="231.0"></displayPosition>
+		</node>
+		<node id="Multilook">
+			<displayPosition x="673.0" y="233.0"></displayPosition>
+		</node>
+		<node id="Subset">
+			<displayPosition x="788.0" y="232.0"></displayPosition>
+		</node>
+		<node id="Write">
+			<displayPosition x="961.0" y="234.0"></displayPosition>
+		</node>
+	</applicationData>
+</graph>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<graph id="Graph">
+	<version>1.0</version>
+	<node id="Read">
+		<operator>Read</operator>
+		<sources></sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<useAdvancedOptions>false</useAdvancedOptions>
+			<file>/mnt/camobi_2/PHMG/Sentinel_Acquisition/unzip_folder/S1A_IW_SLC__1SDV_20170528T045215_20170528T045243_016777_01BE0F_E0C1.SAFE</file>
+			<copyMetadata>true</copyMetadata>
+			<bandNames></bandNames>
+			<pixelRegion>0,0,68898,15070</pixelRegion>
+			<maskNames></maskNames>
+		</parameters>
+	</node>
+	<node id="Apply-Orbit-File">
+		<operator>Apply-Orbit-File</operator>
+		<sources>
+			<sourceProduct refid="Read"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<orbitType>Sentinel Precise (Auto Download)</orbitType>
+			<polyDegree>3</polyDegree>
+			<continueOnFail>True</continueOnFail>
+		</parameters>
+	</node>
+	<node id="TOPSAR-Deburst">
+		<operator>TOPSAR-Deburst</operator>
+		<sources>
+			<sourceProduct refid="Apply-Orbit-File"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<selectedPolarisations></selectedPolarisations>
+		</parameters>
+	</node>
+	<node id="Polarimetric-Speckle-Filter">
+		<operator>Polarimetric-Speckle-Filter</operator>
+		<sources>
+			<sourceProduct refid="TOPSAR-Deburst"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<filter>Refined Lee Filter</filter>
+			<filterSize>5</filterSize>
+			<numLooksStr>1</numLooksStr>
+			<windowSize>5x5</windowSize>
+			<targetWindowSizeStr>3x3</targetWindowSizeStr>
+			<anSize>50</anSize>
+			<sigmaStr>0.9</sigmaStr>
+			<searchWindowSizeStr>15</searchWindowSizeStr>
+			<patchSizeStr>5</patchSizeStr>
+			<scaleSizeStr>1</scaleSizeStr>
+		</parameters>
+	</node>
+	<node id="Polarimetric-Decomposition">
+		<operator>Polarimetric-Decomposition</operator>
+		<sources>
+			<sourceProduct refid="Polarimetric-Speckle-Filter"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<decomposition>H-Alpha Dual Pol Decomposition</decomposition>
+			<windowSize>5</windowSize>
+			<outputHAAlpha>true</outputHAAlpha>
+			<outputBetaDeltaGammaLambda>false</outputBetaDeltaGammaLambda>
+			<outputAlpha123>false</outputAlpha123>
+			<outputLambda123>false</outputLambda123>
+			<outputTouziParamSet0>true</outputTouziParamSet0>
+			<outputTouziParamSet1>false</outputTouziParamSet1>
+			<outputTouziParamSet2>false</outputTouziParamSet2>
+			<outputTouziParamSet3>false</outputTouziParamSet3>
+			<outputHuynenParamSet0>true</outputHuynenParamSet0>
+			<outputHuynenParamSet1>false</outputHuynenParamSet1>
+		</parameters>
+	</node>
+	<node id="Subset">
+		<operator>Subset</operator>
+		<sources>
+			<sourceProduct refid="Polarimetric-Decomposition"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands>Entropy,Anisotropy,Alpha</sourceBands>
+			<tiePointGrids></tiePointGrids>
+			<region>0,0,0,0</region>
+			<referenceBand></referenceBand>
+			<geoRegion>POLYGON ((            12.150811645776212 -7.618894698506098,             11.649407305467673 -7.5068401182956865,             11.503385569032782 -8.161878384643632,             12.00585674567078 -8.274477385550346,             12.150811645776212 -7.618894698506098        ))</geoRegion>
+			<subSamplingX>1</subSamplingX>
+			<subSamplingY>1</subSamplingY>
+			<fullSwath>false</fullSwath>
+			<copyMetadata>true</copyMetadata>
+		</parameters>
+	</node>
+	<node id="Write">
+		<operator>Write</operator>
+		<sources>
+			<sourceProduct refid="Subset"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<file>/mnt/camobi_2/PHMG/Sentinel_Acquisition/nc_folder/E0C1_Orb_Deb_Spk_HA</file>
+			<formatName>NetCDF4-CF</formatName>
+		</parameters>
+	</node>
+	<applicationData id="Presentation">
+		<Description></Description>
+		<node id="Read">
+			<displayPosition x="33.0" y="57.0"></displayPosition>
+		</node>
+		<node id="Apply-Orbit-File">
+			<displayPosition x="43.0" y="147.0"></displayPosition>
+		</node>
+		<node id="TOPSAR-Deburst">
+			<displayPosition x="53.0" y="250.0"></displayPosition>
+		</node>
+		<node id="Polarimetric-Speckle-Filter">
+			<displayPosition x="222.0" y="259.0"></displayPosition>
+		</node>
+		<node id="Polarimetric-Decomposition">
+			<displayPosition x="449.0" y="252.0"></displayPosition>
+		</node>
+		<node id="Subset">
+			<displayPosition x="531.0" y="192.0"></displayPosition>
+		</node>
+		<node id="Write">
+			<displayPosition x="529.0" y="128.0"></displayPosition>
+		</node>
+	</applicationData>
+</graph>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<graph id="Graph">
+	<version>1.0</version>
+	<node id="Read">
+		<operator>Read</operator>
+		<sources></sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<file>/mnt/camobi_3/new_data/nc_data/6243.nc</file>
+			<formatName>NetCDF-CF</formatName>
+		</parameters>
+	</node>
+	<node id="Land-Sea-Mask">
+		<operator>Land-Sea-Mask</operator>
+		<sources>
+			<sourceProduct refid="Read"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<sourceBands></sourceBands>
+			<landMask>true</landMask>
+			<useSRTM>true</useSRTM>
+			<geometry></geometry>
+			<invertGeometry>false</invertGeometry>
+			<shorelineExtension>0</shorelineExtension>
+		</parameters>
+	</node>
+	<node id="Write">
+		<operator>Write</operator>
+		<sources>
+			<sourceProduct refid="Land-Sea-Mask"></sourceProduct>
+		</sources>
+		<parameters class="com.bc.ceres.binding.dom.XppDomElement">
+			<file>/mnt/camobi_2/PHMG/Sentinel_Acquisition/no_land/land.nc</file>
+			<formatName>NetCDF4-CF</formatName>
+		</parameters>
+	</node>
+	<applicationData id="Presentation">
+		<Description></Description>
+		<node id="Read">
+			<displayPosition x="37.0" y="134.0"></displayPosition>
+		</node>
+		<node id="Land-Sea-Mask">
+			<displayPosition x="227.0" y="152.0"></displayPosition>
+		</node>
+		<node id="Write">
+			<displayPosition x="455.0" y="135.0"></displayPosition>
+		</node>
+	</applicationData>
+</graph>
