@@ -213,8 +213,7 @@ if __name__ == '__main__':
     test_path = '/mnt/camobi_2/PHMG/delete_now'
     
     data_pd = pd.read_csv("/mnt/camobi_2/PHMG/Sentinel_Acquisition/New_sar_img.csv", header=0)[FILE_NAME_COLUMN]
-    data_pd = list(data_pd.dropna(how="all"))
-    test = DownloadSar(email="pedro.meirelles@ufba.br", password="Thermal1234@")
+    data_pd = list(data_pd.dropna(how="all")))
     # test.download_sls(data_pd, test_path)
     # test.download_ocn('/mnt/camobi_2/PHMG/temp_ocn', NETCDF_FOLDER, '/mnt/camobi_2/PHMG/unzip_folder_delete')
     test.download_grdh('/mnt/camobi_2/PHMG/temp_grdh', NETCDF_FOLDER, '/mnt/camobi_2/PHMG/unzip_folder_delete', type='GRDH')
